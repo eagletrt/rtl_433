@@ -8,6 +8,7 @@
 #include "r_device.h"
 
 #define DEVICES \
+    DECL(tpms_eagle) \
     DECL(silvercrest) \
     DECL(rubicson) \
     DECL(prologue) \
