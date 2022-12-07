@@ -14,7 +14,7 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     // Checksum verification
     uint8_t b[9] = {0};
     bitbuffer_extract_bytes(&packet_bits, 0, 4, b, 72);
-    int chk = crc8(b, 8, 0, 0);
+    // int chk = crc8(b, 8, 0, 0);
     // TODO: CHECKSUM
 
     uint32_t id = (unsigned)b[0] << 24 | b[1] << 16 | b[2] << 8 | b[3];
@@ -24,6 +24,7 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     uint8_t pressure = b[5];
     uint8_t temperature = b[6];
     uint8_t acceleration = b[7];
+    uint8_t checksum = b[8];
 
     printf("id: %08X, battery: %i, pressure: %i, temperature: %i, acceleration: %i\n",
             id, battery_flag, pressure, temperature, acceleration);
@@ -31,14 +32,14 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     /* clang-format off */
     data_t *data = data_make(
         "model", "Model", DATA_STRING, "EAGLE TPMS",
-        "id", "Id", DATA_FORMAT, "%08X", DATA_INT, id,
+        "id", "Id", DATA_FORMAT, "%08X", DATA_INT, (unsigned)id,
         "pressure", "Pressure", DATA_INT, pressure,
         "temperature", "Temperature", DATA_INT, temperature,
         "acceleration", "Acceleration", DATA_INT, acceleration,
         "battery", "Battery flag", DATA_INT, battery_flag,
         "interframe", "Interframe", DATA_INT, interframe,
         "wo_state", "WO State", DATA_INT, wo_state,
-        "checksum", "Checksum", DATA_INT, chk,
+        "checksum", "Checksum", DATA_INT, checksum,
         "mic", "Integrity",  DATA_STRING, "CRC",
         NULL
     );
