@@ -1,13 +1,14 @@
+#include <math.h>
 #include "decoder.h"
 
 #define PRESSURE_0 92           // 92 from sensor equals 0 bar
-#define PRESSURE_JUMP 1/74      // pressure jump per unit
+#define PRESSURE_JUMP 0.0138    // pressure jump per unit
 
 // II II II II BW PP TT AA CC CC
 
 int calc_pressure(uint8_t pressure)
 {
-    return (pressure - PRESSURE_0) * PRESSURE_JUMP;
+    return (int)floor((pressure - PRESSURE_0) * PRESSURE_JUMP * 10);
 }
 
 static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned row, unsigned bitpos)
@@ -34,8 +35,8 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     uint8_t acceleration = b[7];
     uint8_t checksum = b[8];
 
-    printf("id: %08X, battery: %i, pressure: %i, temperature: %i, acceleration: %i\n",
-            id, battery_flag, pressure, temperature, acceleration);
+    printf("id: %08X, battery: %i, pressure: %i, sensor_pressure: %i, temperature: %i, acceleration: %i\n",
+            id, battery_flag, pressure, calc_pressure(pressure), temperature, acceleration);
 
     /* clang-format off */
     data_t *data = data_make(
