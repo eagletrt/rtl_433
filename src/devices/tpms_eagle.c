@@ -1,16 +1,6 @@
 #include <math.h>
 #include "decoder.h"
 
-#define PRESSURE_0 92           // 92 from sensor equals 0 bar
-#define PRESSURE_JUMP 0.0138    // pressure jump per unit
-
-// II II II II BW PP TT AA CC CC
-
-double calc_pressure(uint8_t pressure)
-{
-    return floor((pressure - PRESSURE_0) * PRESSURE_JUMP * 10) / 10;
-}
-
 static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned row, unsigned bitpos)
 {
     bitbuffer_t packet_bits = {0};
@@ -35,14 +25,14 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     uint8_t acceleration = b[7];
     uint8_t checksum = b[8];
 
-    printf("id: %08X, battery: %i, sensor_pressure: %i, pressure: %f, temperature: %i, acceleration: %i\n",
-            id, battery_flag, pressure, calc_pressure(pressure), temperature, acceleration);
+    printf("id: %08X, battery: %i, pressure: %i, temperature: %i, acceleration: %i\n",
+            id, battery_flag, pressure, temperature, acceleration);
 
     /* clang-format off */
     data_t *data = data_make(
         "model", "Model", DATA_STRING, "EAGLE TPMS",
         "id", "Id", DATA_FORMAT, "%08X", DATA_INT, (unsigned)id,
-        "pressure", "Pressure", DATA_DOUBLE, calc_pressure(pressure),
+        "pressure", "Pressure", DATA_INT, pressure,
         "temperature", "Temperature", DATA_INT, temperature,
         "acceleration", "Acceleration", DATA_INT, acceleration,
         "battery", "Battery flag", DATA_INT, battery_flag,
