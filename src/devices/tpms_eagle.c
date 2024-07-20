@@ -20,7 +20,9 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     uint8_t battery_flag = b[4] >> 7;
     uint8_t interframe = (b[4] & 0x7F) >> 4;    // mask 0111 1111
     uint8_t wo_state = b[4] & 0xF;              // mask 0000 1111
-    uint8_t pressure = b[5];
+    // The pressure measurement overflows on battery bit, we don't know why
+    // uint8_t pressure = b[5];
+    uint16_t pressure = ((b[5] >> 0x7) << 8) | b[6];
     uint8_t temperature = b[6];
     uint8_t acceleration = b[7];
     uint8_t checksum = b[8];
