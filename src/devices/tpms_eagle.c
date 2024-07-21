@@ -27,8 +27,8 @@ static int tpms_eagle_decode(r_device *decoder, bitbuffer_t *bitbuffer, unsigned
     uint8_t acceleration = b[7];
     uint8_t checksum = b[8];
 
-    printf("id: %08X, battery: %i, pressure: %i, temperature: %i, acceleration: %i\n",
-            id, battery_flag, pressure, temperature, acceleration);
+    // printf("id: %08X, battery: %i, pressure: %i, temperature: %i, acceleration: %i\n",
+    //         id, battery_flag, pressure, temperature, acceleration);
 
     /* clang-format off */
     data_t *data = data_make(
